@@ -1,0 +1,19 @@
+/* globals.css — base styles applied to the entire app */
+
+@import "tailwindcss";
+
+/* Prevent iOS Safari from zooming in on form inputs */
+input, select, textarea {
+  font-size: 16px;
+}
+
+/* Smooth scrolling for the whole app */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Remove default body margin */
+body {
+  margin: 0;
+  padding: 0;
+}
