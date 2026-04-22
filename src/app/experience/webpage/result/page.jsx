@@ -12,6 +12,7 @@ import SeeTheCodePanel from "@/components/shared/SeeTheCodePanel";
 import CodeBoxxCTA from "@/components/shared/CodeBoxxCTA";
 import { generateWebPageCode } from "@/utils/generateWebPageCode";
 import { getHighlightKey } from "@/utils/getHighlightKey";
+import EmailSubmissionForm from "@/components/shared/EmailSubmissionForm";
 
 export default function WebPageResultPage() {
   const { formData } = useWebPage();
@@ -33,6 +34,11 @@ export default function WebPageResultPage() {
       <WebPageResultCard />
       <SeeTheCodePanel code={generatedCode} highlightKey={highlightKey} />
       <CodeBoxxCTA />
+      <EmailSubmissionForm
+        generatedCode={generatedCode}
+        experience="webpage"
+        studentName={formData.name}
+      />
     </PageShell>
   );
 }

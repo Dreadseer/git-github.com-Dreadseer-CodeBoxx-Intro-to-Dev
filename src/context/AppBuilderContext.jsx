@@ -49,6 +49,7 @@ export function AppBuilderProvider({ children }) {
     };
     setFormData((prev) => ({
       ...prev,
+      lastChanged: { kind: "widget", widgetType: type, slot: position },
       widgets: [...prev.widgets, newWidget],
     }));
   }
@@ -63,13 +64,18 @@ export function AppBuilderProvider({ children }) {
 
   // Updates a single value field on a widget instance
   function updateWidget(id, key, value) {
-    setFormData((prev) => ({
-      ...prev,
-      lastChanged: "widget",
-      widgets: prev.widgets.map((w) =>
-        w.id === id ? { ...w, values: { ...w.values, [key]: value } } : w
-      ),
-    }));
+    setFormData((prev) => {
+      const widget = prev.widgets.find((w) => w.id === id);
+      return {
+        ...prev,
+        lastChanged: widget
+          ? { kind: "widget", widgetType: widget.type, slot: widget.position }
+          : prev.lastChanged,
+        widgets: prev.widgets.map((w) =>
+          w.id === id ? { ...w, values: { ...w.values, [key]: value } } : w
+        ),
+      };
+    });
   }
 
   // Moves a widget to a different placement slot

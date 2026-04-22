@@ -12,6 +12,7 @@ import SeeTheCodePanel from "@/components/shared/SeeTheCodePanel";
 import CodeBoxxCTA from "@/components/shared/CodeBoxxCTA";
 import { generateAppCode } from "@/utils/generateAppCode";
 import { getHighlightKey } from "@/utils/getHighlightKey";
+import EmailSubmissionForm from "@/components/shared/EmailSubmissionForm";
 
 export default function AppResultPage() {
   const { formData } = useAppBuilder();
@@ -33,6 +34,11 @@ export default function AppResultPage() {
       <AppResultCard />
       <SeeTheCodePanel code={generatedCode} highlightKey={highlightKey} />
       <CodeBoxxCTA />
+      <EmailSubmissionForm
+        generatedCode={generatedCode}
+        experience="app"
+        studentName={formData.appTitle}
+      />
     </PageShell>
   );
 }

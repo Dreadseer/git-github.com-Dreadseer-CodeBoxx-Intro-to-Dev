@@ -64,29 +64,31 @@ export default function CodeBlock({ code, language = "HTML", highlightKey = null
   );
 }
 
-// Finds the line indices that belong to the section containing the highlightKey marker.
-// A section starts at the comment line with the marker and ends before the next comment or blank line.
+// Finds the line indices that belong to all sections matching any marker in highlightKey.
+// Accepts a string or array of strings. Uses a Set to avoid duplicate indices.
 function getHighlightedLineIndices(lines, highlightKey) {
   if (!highlightKey) return [];
 
-  // Find the line index that contains the marker string
-  const startIndex = lines.findIndex((line) => line.includes(highlightKey));
-  if (startIndex === -1) return [];
+  // Normalise to array so we can handle both string and array inputs
+  const keys = Array.isArray(highlightKey) ? highlightKey : [highlightKey];
 
-  const result = [startIndex];
+  const result = new Set();
 
-  // Walk forward from the marker line, collecting lines until the next comment or blank line
-  for (let i = startIndex + 1; i < lines.length; i++) {
-    const trimmed = lines[i].trim();
+  keys.forEach((key) => {
+    if (!key) return;
 
-    // Stop at the next comment line
-    if (trimmed.startsWith("<!--") || trimmed.startsWith("//")) break;
+    const startIndex = lines.findIndex((line) => line.includes(key));
+    if (startIndex === -1) return;
 
-    // Stop at a blank line (section boundary)
-    if (trimmed === "") break;
+    result.add(startIndex);
 
-    result.push(i);
-  }
+    for (let i = startIndex + 1; i < lines.length; i++) {
+      const trimmed = lines[i].trim();
+      if (trimmed.startsWith("<!--") || trimmed.startsWith("//")) break;
+      if (trimmed === "") break;
+      result.add(i);
+    }
+  });
 
-  return result;
+  return Array.from(result);
 }
