@@ -16,10 +16,15 @@ import AppFormStep1 from "@/components/app/AppFormStep1";
 import AppFormStep2 from "@/components/app/AppFormStep2";
 import AppFormStep3 from "@/components/app/AppFormStep3";
 import AppLivePreview from "@/components/app/AppLivePreview";
+import SeeTheCodePanel from "@/components/shared/SeeTheCodePanel";
+import { generateAppCode } from "@/utils/generateAppCode";
+import { getHighlightKey } from "@/utils/getHighlightKey";
 
 export default function AppBuilderPage() {
   const router = useRouter();
   const { formData, addWidget, removeWidget, updateWidget, moveWidget } = useAppBuilder();
+  const generatedCode = generateAppCode(formData);
+  const highlightKey = getHighlightKey(formData.lastChanged, "app");
 
   // Tracks which step (1, 2, or 3) the student is currently on
   const [step, setStep] = useState(1);
@@ -118,6 +123,18 @@ export default function AppBuilderPage() {
           onCancel={() => setPendingWidgetKey(null)}
         />
       )}
+
+      {/* Live code panel — open by default so students see their code updating */}
+      <div className="mt-6">
+        <p className="text-xs text-center text-gray-400 mb-2">
+          Your code updates as you build
+        </p>
+        <SeeTheCodePanel
+          code={generatedCode}
+          highlightKey={highlightKey}
+          defaultOpen={true}
+        />
+      </div>
     </PageShell>
   );
 }

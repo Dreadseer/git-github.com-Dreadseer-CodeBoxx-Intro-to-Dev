@@ -16,10 +16,15 @@ import WebPageFormStep1 from "@/components/webpage/WebPageFormStep1";
 import WebPageFormStep2 from "@/components/webpage/WebPageFormStep2";
 import WebPageFormStep3 from "@/components/webpage/WebPageFormStep3";
 import WebPageLivePreview from "@/components/webpage/WebPageLivePreview";
+import SeeTheCodePanel from "@/components/shared/SeeTheCodePanel";
+import { generateWebPageCode } from "@/utils/generateWebPageCode";
+import { getHighlightKey } from "@/utils/getHighlightKey";
 
 export default function WebPageBuilderPage() {
   const router = useRouter();
   const { formData, addWidget, removeWidget, updateWidget, moveWidget } = useWebPage();
+  const generatedCode = generateWebPageCode(formData);
+  const highlightKey = getHighlightKey(formData.lastChanged, "webpage");
 
   // Tracks which step (1, 2, or 3) the student is currently on
   const [step, setStep] = useState(1);
@@ -119,6 +124,18 @@ export default function WebPageBuilderPage() {
           onCancel={() => setPendingWidgetKey(null)}
         />
       )}
+
+      {/* Live code panel — open by default so students see their code updating */}
+      <div className="mt-6">
+        <p className="text-xs text-center text-gray-400 mb-2">
+          Your code updates as you build
+        </p>
+        <SeeTheCodePanel
+          code={generatedCode}
+          highlightKey={highlightKey}
+          defaultOpen={true}
+        />
+      </div>
     </PageShell>
   );
 }

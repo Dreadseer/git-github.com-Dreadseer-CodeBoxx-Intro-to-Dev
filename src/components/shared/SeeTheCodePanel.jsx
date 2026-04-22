@@ -6,9 +6,9 @@
 import { useState } from "react";
 import CodeBlock from "@/components/shared/CodeBlock";
 
-export default function SeeTheCodePanel({ code, highlightKey = null }) {
+export default function SeeTheCodePanel({ code, highlightKey = null, defaultOpen = false }) {
   // Controls whether the panel is open or closed
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
     <div className="w-full my-4">
