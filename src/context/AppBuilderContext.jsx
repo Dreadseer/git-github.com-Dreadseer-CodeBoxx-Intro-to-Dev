@@ -1,10 +1,11 @@
 // AppBuilderContext.jsx — Manages form state for Experience 2 (App Builder).
-// Provides formData, updateField, and updateMessage to all steps, the preview, and the result screen.
+// Provides formData, updateField, updateMessage, and all widget methods to steps, preview, and result.
 
 "use client";
 
 import { createContext, useContext, useState } from "react";
 import { DEFAULT_THEME } from "@/data/themes";
+import { WIDGET_TYPES } from "@/data/widgets";
 
 // Create the context object
 const AppBuilderContext = createContext(null);
@@ -15,6 +16,8 @@ const defaultFormData = {
   buttonLabel: "",
   messages: ["", "", ""],
   themeColor: DEFAULT_THEME,
+  widgets: [],
+  lastChanged: null,
 };
 
 // Provider component — wraps the experience route so all children can access state
@@ -23,7 +26,7 @@ export function AppBuilderProvider({ children }) {
 
   // Updates a single top-level field without overwriting the rest of the form data
   function updateField(key, value) {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => ({ ...prev, [key]: value, lastChanged: key }));
   }
 
   // Updates one message in the messages array by its index position (0, 1, or 2)
@@ -31,12 +34,56 @@ export function AppBuilderProvider({ children }) {
     setFormData((prev) => {
       const updatedMessages = [...prev.messages];
       updatedMessages[index] = value;
-      return { ...prev, messages: updatedMessages };
+      return { ...prev, messages: updatedMessages, lastChanged: "messages" };
     });
   }
 
+  // Adds a new widget instance at the chosen position with default values
+  function addWidget(type, position) {
+    const widgetDef = WIDGET_TYPES.find((w) => w.key === type);
+    const newWidget = {
+      id: `widget_${Date.now()}`,
+      type,
+      position,
+      values: { ...widgetDef.defaults },
+    };
+    setFormData((prev) => ({
+      ...prev,
+      widgets: [...prev.widgets, newWidget],
+    }));
+  }
+
+  // Removes a widget by its unique id
+  function removeWidget(id) {
+    setFormData((prev) => ({
+      ...prev,
+      widgets: prev.widgets.filter((w) => w.id !== id),
+    }));
+  }
+
+  // Updates a single value field on a widget instance
+  function updateWidget(id, key, value) {
+    setFormData((prev) => ({
+      ...prev,
+      lastChanged: "widget",
+      widgets: prev.widgets.map((w) =>
+        w.id === id ? { ...w, values: { ...w.values, [key]: value } } : w
+      ),
+    }));
+  }
+
+  // Moves a widget to a different placement slot
+  function moveWidget(id, newPosition) {
+    setFormData((prev) => ({
+      ...prev,
+      widgets: prev.widgets.map((w) =>
+        w.id === id ? { ...w, position: newPosition } : w
+      ),
+    }));
+  }
+
   return (
-    <AppBuilderContext.Provider value={{ formData, updateField, updateMessage }}>
+    <AppBuilderContext.Provider value={{ formData, updateField, updateMessage, addWidget, removeWidget, updateWidget, moveWidget }}>
       {children}
     </AppBuilderContext.Provider>
   );

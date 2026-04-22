@@ -1,13 +1,17 @@
 // page.jsx — Web Page Builder multi-step form (Experience 1).
-// Collects name, dream job, bio, theme color, and avatar across 3 steps.
+// Collects name, dream job, bio, theme color, and avatar across 3 steps. Supports widget placement.
 
 "use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useWebPage } from "@/context/WebPageContext";
 import PageShell from "@/components/shared/PageShell";
 import StepHeader from "@/components/shared/StepHeader";
 import StepProgress from "@/components/shared/StepProgress";
+import WidgetPanel from "@/components/shared/WidgetPanel";
+import WidgetPlacer from "@/components/shared/WidgetPlacer";
+import WidgetEditor from "@/components/shared/WidgetEditor";
 import WebPageFormStep1 from "@/components/webpage/WebPageFormStep1";
 import WebPageFormStep2 from "@/components/webpage/WebPageFormStep2";
 import WebPageFormStep3 from "@/components/webpage/WebPageFormStep3";
@@ -15,9 +19,16 @@ import WebPageLivePreview from "@/components/webpage/WebPageLivePreview";
 
 export default function WebPageBuilderPage() {
   const router = useRouter();
+  const { formData, addWidget, removeWidget, updateWidget, moveWidget } = useWebPage();
 
   // Tracks which step (1, 2, or 3) the student is currently on
   const [step, setStep] = useState(1);
+
+  // Widget being placed — set when a tile is tapped, cleared after placement or cancel
+  const [pendingWidgetKey, setPendingWidgetKey] = useState(null);
+
+  // Widget currently open in the editor — set when a canvas item is tapped
+  const [selectedWidgetId, setSelectedWidgetId] = useState(null);
 
   // Step titles shown in the StepHeader
   const stepTitles = {
@@ -43,6 +54,22 @@ export default function WebPageBuilderPage() {
     }
   }
 
+  // Called when a widget tile is tapped — opens the WidgetPlacer
+  function handleWidgetSelect(widgetKey) {
+    setPendingWidgetKey(widgetKey);
+  }
+
+  // Called when drag-and-drop places a widget directly onto a canvas slot
+  function handleWidgetDrop(widgetKey, position) {
+    addWidget(widgetKey, position);
+  }
+
+  // Called when WidgetPlacer confirms a placement slot
+  function handlePlacerConfirm(widgetKey, position) {
+    addWidget(widgetKey, position);
+    setPendingWidgetKey(null);
+  }
+
   return (
     <PageShell>
       {/* Back arrow navigates to /select on step 1, or to the previous step otherwise */}
@@ -63,8 +90,35 @@ export default function WebPageBuilderPage() {
       {/* Live preview — updates in real time as the student fills in the form */}
       <div className="mt-8">
         <p className="text-xs text-center text-gray-400 mb-2">Live preview</p>
-        <WebPageLivePreview />
+        <WebPageLivePreview
+          onDrop={handleWidgetDrop}
+          onRemove={removeWidget}
+          onEdit={setSelectedWidgetId}
+          selectedWidgetId={selectedWidgetId}
+        />
       </div>
+
+      {/* Widget panel — horizontal tray of available widget tiles */}
+      <WidgetPanel onSelect={handleWidgetSelect} />
+
+      {/* Widget editor — shown inline when a placed widget is selected */}
+      {selectedWidgetId && (
+        <WidgetEditor
+          widget={formData.widgets.find((w) => w.id === selectedWidgetId)}
+          onUpdate={updateWidget}
+          onClose={() => setSelectedWidgetId(null)}
+          onMove={moveWidget}
+        />
+      )}
+
+      {/* Widget placer — bottom sheet shown after tapping a widget tile */}
+      {pendingWidgetKey && (
+        <WidgetPlacer
+          widgetKey={pendingWidgetKey}
+          onConfirm={handlePlacerConfirm}
+          onCancel={() => setPendingWidgetKey(null)}
+        />
+      )}
     </PageShell>
   );
 }

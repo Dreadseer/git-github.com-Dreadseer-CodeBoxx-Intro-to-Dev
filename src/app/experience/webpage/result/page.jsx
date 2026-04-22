@@ -11,6 +11,7 @@ import WebPageResultCard from "@/components/webpage/WebPageResultCard";
 import SeeTheCodePanel from "@/components/shared/SeeTheCodePanel";
 import CodeBoxxCTA from "@/components/shared/CodeBoxxCTA";
 import { generateWebPageCode } from "@/utils/generateWebPageCode";
+import { getHighlightKey } from "@/utils/getHighlightKey";
 
 export default function WebPageResultPage() {
   const { formData } = useWebPage();
@@ -23,11 +24,14 @@ export default function WebPageResultPage() {
   // Generate the HTML code string from the student's form data
   const generatedCode = generateWebPageCode(formData);
 
+  // Derive which code section to highlight based on the last changed field
+  const highlightKey = getHighlightKey(formData.lastChanged, "webpage");
+
   return (
     <PageShell>
       <StepHeader title="Your page is ready! 🎉" />
       <WebPageResultCard />
-      <SeeTheCodePanel code={generatedCode} />
+      <SeeTheCodePanel code={generatedCode} highlightKey={highlightKey} />
       <CodeBoxxCTA />
     </PageShell>
   );

@@ -35,7 +35,7 @@ export function generateWebPageCode({ name, dreamJob, bio, themeColor, avatar })
       text-align: center;
     }
 
-    /* This is the colored bar at the top of your page */
+    /* This sets your page's color */
     .header {
       background-color: ${theme.hex};
       padding: 32px 16px;

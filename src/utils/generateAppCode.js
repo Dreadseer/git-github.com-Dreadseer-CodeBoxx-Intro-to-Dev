@@ -32,7 +32,7 @@ export function generateAppCode({ appTitle, buttonLabel, messages, themeColor })
       text-align: center;
     }
 
-    /* This styles your app title */
+    /* This sets your app's color */
     .app-title {
       color: ${theme.hex};
       font-size: 24px;
@@ -104,6 +104,9 @@ export function generateAppCode({ appTitle, buttonLabel, messages, themeColor })
       document.getElementById("message").innerText = messages[currentIndex];
     }
   </script>
+
+  <!-- This is the footer credit -->
+  <p style="color: #9ca3af; font-size: 11px; margin-top: 32px;">Made with CodeBoxx</p>
 
 </body>
 </html>`;

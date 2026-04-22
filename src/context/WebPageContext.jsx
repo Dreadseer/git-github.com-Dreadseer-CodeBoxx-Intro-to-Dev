@@ -1,11 +1,12 @@
 // WebPageContext.jsx — Manages form state for Experience 1 (Web Page Builder).
-// Provides formData and updateField to all steps, the preview, and the result screen.
+// Provides formData, updateField, and all widget methods to all steps, the preview, and result screen.
 
 "use client";
 
 import { createContext, useContext, useState } from "react";
 import { DEFAULT_THEME } from "@/data/themes";
 import { DEFAULT_AVATAR } from "@/data/avatars";
+import { WIDGET_TYPES } from "@/data/widgets";
 
 // Create the context object
 const WebPageContext = createContext(null);
@@ -17,6 +18,8 @@ const defaultFormData = {
   bio: "",
   themeColor: DEFAULT_THEME,
   avatar: DEFAULT_AVATAR,
+  widgets: [],
+  lastChanged: null,
 };
 
 // Provider component — wraps the experience route so all children can access state
@@ -25,11 +28,55 @@ export function WebPageProvider({ children }) {
 
   // Updates a single field without overwriting the rest of the form data
   function updateField(key, value) {
-    setFormData((prev) => ({ ...prev, [key]: value }));
+    setFormData((prev) => ({ ...prev, [key]: value, lastChanged: key }));
+  }
+
+  // Adds a new widget instance at the chosen position with default values
+  function addWidget(type, position) {
+    const widgetDef = WIDGET_TYPES.find((w) => w.key === type);
+    const newWidget = {
+      id: `widget_${Date.now()}`,
+      type,
+      position,
+      values: { ...widgetDef.defaults },
+    };
+    setFormData((prev) => ({
+      ...prev,
+      widgets: [...prev.widgets, newWidget],
+    }));
+  }
+
+  // Removes a widget by its unique id
+  function removeWidget(id) {
+    setFormData((prev) => ({
+      ...prev,
+      widgets: prev.widgets.filter((w) => w.id !== id),
+    }));
+  }
+
+  // Updates a single value field on a widget instance
+  function updateWidget(id, key, value) {
+    setFormData((prev) => ({
+      ...prev,
+      lastChanged: "widget",
+      widgets: prev.widgets.map((w) =>
+        w.id === id ? { ...w, values: { ...w.values, [key]: value } } : w
+      ),
+    }));
+  }
+
+  // Moves a widget to a different placement slot
+  function moveWidget(id, newPosition) {
+    setFormData((prev) => ({
+      ...prev,
+      widgets: prev.widgets.map((w) =>
+        w.id === id ? { ...w, position: newPosition } : w
+      ),
+    }));
   }
 
   return (
-    <WebPageContext.Provider value={{ formData, updateField }}>
+    <WebPageContext.Provider value={{ formData, updateField, addWidget, removeWidget, updateWidget, moveWidget }}>
       {children}
     </WebPageContext.Provider>
   );

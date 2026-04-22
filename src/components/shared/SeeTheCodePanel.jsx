@@ -6,7 +6,7 @@
 import { useState } from "react";
 import CodeBlock from "@/components/shared/CodeBlock";
 
-export default function SeeTheCodePanel({ code }) {
+export default function SeeTheCodePanel({ code, highlightKey = null }) {
   // Controls whether the panel is open or closed
   const [isOpen, setIsOpen] = useState(false);
 
@@ -35,7 +35,7 @@ export default function SeeTheCodePanel({ code }) {
           </p>
 
           {/* Code block displaying the full generated HTML */}
-          <CodeBlock code={code} />
+          <CodeBlock code={code} highlightKey={highlightKey} />
 
         </div>
       )}
