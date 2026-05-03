@@ -16,6 +16,7 @@ export default function WebPageLivePreview({ formData }) {
     fontPairing,
     heroBackground,
     ctaLabel,
+    ctaUrl,
     ctaEnabled,
     sections,
   } = formData;
@@ -78,9 +79,21 @@ export default function WebPageLivePreview({ formData }) {
           {tagline || <span className="placeholder">Your tagline goes here</span>}
         </p>
         {ctaEnabled && (
-          <div className="prev-cta" style={{ color: theme.hex }}>
-            {ctaLabel || "Contact Me"}
-          </div>
+          ctaUrl ? (
+            <a
+              href={ctaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="prev-cta"
+              style={{ color: theme.hex }}
+            >
+              {ctaLabel || "Contact Me"}
+            </a>
+          ) : (
+            <a href="#contact" className="prev-cta" style={{ color: theme.hex }}>
+              {ctaLabel || "Contact Me"}
+            </a>
+          )
         )}
       </section>
 
@@ -145,13 +158,16 @@ export default function WebPageLivePreview({ formData }) {
             {socialLinks.length > 0 && (
               <div className="prev-social">
                 {socialLinks.map((s) => (
-                  <span
+                  <a
                     key={s.label}
+                    href={s.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="prev-social-btn"
                     style={{ background: theme.hex }}
                   >
                     {s.label}
-                  </span>
+                  </a>
                 ))}
               </div>
             )}

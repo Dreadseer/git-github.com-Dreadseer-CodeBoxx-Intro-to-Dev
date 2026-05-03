@@ -18,7 +18,7 @@ export default function CodeBoxxCTA() {
 
       {/* CTA button — external link, opens in new tab */}
       <a
-        href={process.env.NEXT_PUBLIC_CTA_URL}
+        href="https://www.codeboxx.com/"
         target="_blank"
         rel="noopener noreferrer"
         className="w-full block bg-yellow-400 text-gray-900 font-bold text-base py-4 rounded-2xl text-center mt-4"

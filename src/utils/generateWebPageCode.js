@@ -16,6 +16,7 @@ export function generateWebPageCode(formData) {
     fontPairing,
     heroBackground,
     ctaLabel,
+    ctaUrl,
     ctaEnabled,
     sections,
   } = formData;
@@ -307,7 +308,7 @@ export function generateWebPageCode(formData) {
     <span class="hero-avatar">${avatarEmoji}</span>
     <h1 class="hero-name">${escapeHtml(name || "Your Name")}</h1>
     <p class="hero-tagline">${escapeHtml(tagline || "Your tagline goes here")}</p>
-    ${ctaEnabled ? `<a href="#contact" class="cta-button">${escapeHtml(ctaLabel || "Contact Me")}</a>` : ""}
+    ${ctaEnabled ? `<a href="${ctaUrl ? escapeHtml(ctaUrl) : "#contact"}"${ctaUrl ? ' target="_blank" rel="noopener noreferrer"' : ""} class="cta-button">${escapeHtml(ctaLabel || "Contact Me")}</a>` : ""}
   </section>
 
 ${

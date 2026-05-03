@@ -84,15 +84,29 @@ export default function HeroPanel() {
           </div>
         </label>
         {formData.ctaEnabled && (
-          <input
-            className="panel-input"
-            style={{ marginTop: "0.625rem" }}
-            type="text"
-            value={formData.ctaLabel}
-            onChange={(e) => updateField("ctaLabel", e.target.value)}
-            placeholder="e.g. Contact Me"
-            maxLength={30}
-          />
+          <>
+            <input
+              className="panel-input"
+              style={{ marginTop: "0.625rem" }}
+              type="text"
+              value={formData.ctaLabel}
+              onChange={(e) => updateField("ctaLabel", e.target.value)}
+              placeholder="e.g. Contact Me"
+              maxLength={30}
+            />
+            <label className="panel-field-label" style={{ marginTop: "0.75rem" }}>
+              Button Link
+            </label>
+            <input
+              className="panel-input"
+              style={{ marginTop: "0.25rem" }}
+              type="url"
+              value={formData.ctaUrl}
+              onChange={(e) => updateField("ctaUrl", e.target.value)}
+              placeholder="https://"
+            />
+            <p className="panel-field-hint">Leave blank to scroll to Contact section</p>
+          </>
         )}
       </PanelSection>
 
@@ -168,6 +182,8 @@ export default function HeroPanel() {
           cursor: pointer;
         }
 
+        .panel-field-label { font-size: 0.8rem; font-weight: 600; color: #374151; display: block; }
+        .panel-field-hint { font-size: 0.75rem; color: #9ca3af; margin-top: 0.25rem; }
         .toggle-text { font-size: 0.9rem; color: #374151; }
 
         .toggle-track {

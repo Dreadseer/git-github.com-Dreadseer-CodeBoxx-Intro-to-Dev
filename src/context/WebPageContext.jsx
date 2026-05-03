@@ -15,6 +15,7 @@ const defaultState = {
   avatar: "rocket",
   heroBackground: "gradient",
   ctaLabel: "Contact Me",
+  ctaUrl: "",
   ctaEnabled: true,
 
   // Sections (toggleable)
