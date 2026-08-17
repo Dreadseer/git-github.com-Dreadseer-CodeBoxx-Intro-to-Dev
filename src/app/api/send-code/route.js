@@ -41,8 +41,9 @@ export async function POST(request) {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
 
-    // Send email to the student
-    await resend.emails.send({
+    // Send email to the student — this is the send that must succeed.
+    // The Resend SDK reports API failures via the returned `error`, not by throwing.
+    const studentSend = await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL,
       to: email,
       subject: `Your CodeBoxx ${experienceLabel} — built by ${name}`,
@@ -66,21 +67,41 @@ export async function POST(request) {
       ],
     });
 
-    // Send internal copy to CodeBoxx with opt-in preferences
-    await resend.emails.send({
-      from: process.env.RESEND_FROM_EMAIL,
-      to: process.env.RESEND_TO_COPY,
-      subject: `[CodeBoxx Event] New submission from ${name}`,
-      html: `
-        <h3>New CodeBoxx Event Submission</h3>
-        <p><strong>Name:</strong> ${name}</p>
-        <p><strong>Email:</strong> ${email}</p>
-        <p><strong>Experience:</strong> ${experienceLabel}</p>
-        <p><strong>Opt-in — Recruitment:</strong> ${optInRecruitment ? "Yes" : "No"}</p>
-        <p><strong>Opt-in — School Info:</strong> ${optInSchoolInfo ? "Yes" : "No"}</p>
-        <p><strong>Data Retention Acknowledged:</strong> ${acknowledgeDataRetention ? "Yes" : "No"}</p>
-      `,
-    });
+    if (studentSend.error) {
+      console.error("Student email failed:", studentSend.error);
+      return Response.json(
+        { error: studentSend.error.message || "Failed to send email" },
+        { status: 502 }
+      );
+    }
+
+    // Send internal copy to CodeBoxx with opt-in preferences.
+    // Best-effort: a failure here is logged but never fails the student's request.
+    if (process.env.RESEND_TO_COPY) {
+      try {
+        const copySend = await resend.emails.send({
+          from: process.env.RESEND_FROM_EMAIL,
+          to: process.env.RESEND_TO_COPY,
+          subject: `[CodeBoxx Event] New submission from ${name}`,
+          html: `
+            <h3>New CodeBoxx Event Submission</h3>
+            <p><strong>Name:</strong> ${name}</p>
+            <p><strong>Email:</strong> ${email}</p>
+            <p><strong>Experience:</strong> ${experienceLabel}</p>
+            <p><strong>Opt-in — Recruitment:</strong> ${optInRecruitment ? "Yes" : "No"}</p>
+            <p><strong>Opt-in — School Info:</strong> ${optInSchoolInfo ? "Yes" : "No"}</p>
+            <p><strong>Data Retention Acknowledged:</strong> ${acknowledgeDataRetention ? "Yes" : "No"}</p>
+          `,
+        });
+        if (copySend.error) {
+          console.error("Internal copy failed:", copySend.error);
+        }
+      } catch (copyError) {
+        console.error("Internal copy failed:", copyError);
+      }
+    } else {
+      console.warn("RESEND_TO_COPY not set — skipping internal submission copy");
+    }
 
     return Response.json({ success: true }, { status: 200 });
 
