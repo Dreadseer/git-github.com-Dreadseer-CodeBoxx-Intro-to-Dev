@@ -1,10 +1,12 @@
-// layout.jsx — Wraps the entire /experience/webpage route segment with WebPageProvider.
-// This makes WebPage form state available to both the form page and the result page.
+// layout.jsx — Wraps the /experience/webpage segment with the Creator Page build state.
 
 "use client";
 
-import { WebPageProvider } from "@/context/WebPageContext";
+import { BuilderProvider } from "@/context/BuilderContext";
+import { EXPERIENCES } from "@/data/experiences";
 
 export default function WebPageLayout({ children }) {
-  return <WebPageProvider>{children}</WebPageProvider>;
+  return (
+    <BuilderProvider experience={EXPERIENCES.webpage}>{children}</BuilderProvider>
+  );
 }

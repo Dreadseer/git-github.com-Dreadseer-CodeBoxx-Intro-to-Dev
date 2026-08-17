@@ -1,13 +1,14 @@
-// AppFormStep2.jsx — Step 2 of the App Builder.
-// Collects the three messages that will cycle when the button is tapped.
+// AppFormStep2.jsx — Mission 03 (Interactive App): Content.
+// Collects the three messages that cycle when the button is tapped.
 
 "use client";
 
-import { useAppBuilder } from "@/context/AppBuilderContext";
+import { useBuilder } from "@/context/BuilderContext";
 import PrimaryButton from "@/components/shared/PrimaryButton";
+import FormField from "@/components/shared/FormField";
 
-export default function AppFormStep2({ onNext }) {
-  const { formData, updateMessage } = useAppBuilder();
+export default function AppFormStep2({ onNext, nextLabel = "Next →" }) {
+  const { formData, updateMessage } = useBuilder();
 
   // All three messages must have content before proceeding
   const isComplete = formData.messages.every((msg) => msg.trim() !== "");
@@ -20,24 +21,16 @@ export default function AppFormStep2({ onNext }) {
 
   return (
     <div className="flex flex-col gap-5 mt-2">
-
-      {/* Render one input per message */}
       {formData.messages.map((message, index) => (
-        <div key={index} className="flex flex-col gap-1">
-          <label className="text-sm font-semibold text-gray-700">
-            Message {index + 1}
-          </label>
-          <input
-            type="text"
-            value={message}
-            onChange={(e) => updateMessage(index, e.target.value)}
-            placeholder={placeholders[index]}
-            className="border border-gray-300 rounded-xl px-4 py-3 text-base text-gray-900 focus:outline-none focus:ring-2 focus:ring-yellow-400"
-          />
-        </div>
+        <FormField
+          key={index}
+          label={`Message ${index + 1}`}
+          value={message}
+          onChange={(value) => updateMessage(index, value)}
+          placeholder={placeholders[index]}
+        />
       ))}
-
-      <PrimaryButton label="Next →" onClick={onNext} disabled={!isComplete} />
+      <PrimaryButton label={nextLabel} onClick={onNext} disabled={!isComplete} />
     </div>
   );
 }
