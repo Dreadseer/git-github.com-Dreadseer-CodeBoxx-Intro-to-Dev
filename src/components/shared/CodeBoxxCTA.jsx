@@ -20,7 +20,7 @@ export default function CodeBoxxCTA({ decisions = 0 }) {
           ? `You made ${decisions} product decisions in about five minutes — and a working product formed around them. `
           : "You made a series of product decisions — and a working product formed around them. "}
         That loop — decide, build, see the result — is software development.
-        CodeBoxx Academy teaches you the full version in 12 weeks. No experience
+        CodeBoxx Academy teaches you the full version in 16 weeks. No experience
         required.
       </p>
 
