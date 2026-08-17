@@ -1,10 +1,12 @@
-// layout.jsx — Wraps the entire /experience/app route segment with AppBuilderProvider.
-// This makes App Builder form state available to both the form page and the result page.
+// layout.jsx — Wraps the /experience/app segment with the Interactive App build state.
 
 "use client";
 
-import { AppBuilderProvider } from "@/context/AppBuilderContext";
+import { BuilderProvider } from "@/context/BuilderContext";
+import { EXPERIENCES } from "@/data/experiences";
 
 export default function AppLayout({ children }) {
-  return <AppBuilderProvider>{children}</AppBuilderProvider>;
+  return (
+    <BuilderProvider experience={EXPERIENCES.app}>{children}</BuilderProvider>
+  );
 }

@@ -1,12 +1,12 @@
 // generateWebPageCode.js — Builds a complete HTML page string from the student's form data.
 // This is the code revealed in the "See the Code" section on the result screen.
 
-import { THEME_COLORS } from "@/data/themes";
+import { getTheme } from "@/data/themes";
 import { AVATAR_OPTIONS } from "@/data/avatars";
 
 export function generateWebPageCode({ name, dreamJob, bio, themeColor, avatar, widgets }) {
   // Look up the hex color for the chosen theme
-  const theme = THEME_COLORS[themeColor] || THEME_COLORS["purple"];
+  const theme = getTheme(themeColor);
 
   // Look up the emoji for the chosen avatar
   const emoji =
@@ -108,6 +108,9 @@ ${afterHeaderWidgets ? `\n  <!-- After header widgets -->\n${afterHeaderWidgets}
 ${bottomWidgets ? `\n  <!-- Bottom widgets -->\n${bottomWidgets}\n` : ""}
   <!-- This is the footer credit -->
   <p class="footer">Made with CodeBoxx</p>
+
+  <!-- psst. you read this far into your own source code. -->
+  <!-- that curiosity is the whole job. — a CodeBoxx developer -->
 
 </body>
 </html>`;

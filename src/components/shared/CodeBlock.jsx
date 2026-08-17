@@ -1,5 +1,5 @@
 // CodeBlock.jsx — Displays generated code with section-level highlighting and auto-scroll.
-// The highlighted section updates when the student changes a field or widget.
+// The highlighted section updates when the student changes a field or module.
 
 "use client";
 
@@ -30,15 +30,14 @@ export default function CodeBlock({ code, language = "HTML", highlightKey = null
 
   return (
     <div className="w-full">
-      {/* Language label pill */}
-      <div className="bg-gray-800 px-5 py-2 flex items-center">
-        <span className="bg-gray-700 text-gray-300 text-xs px-3 py-1 rounded-full">
-          {language}
-        </span>
+      {/* Console chrome bar */}
+      <div className="bg-ink-800 border-y border-line px-5 py-2 flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-accent/70" aria-hidden="true" />
+        <span className="sys text-[10px] text-fg-mid">{language}</span>
       </div>
 
       {/* Code display — scrollable horizontally and vertically */}
-      <div className="bg-gray-900 overflow-x-auto overflow-y-auto max-h-[400px]">
+      <div className="bg-[#0d1117] overflow-x-auto overflow-y-auto max-h-[400px]">
         <pre className="text-xs font-mono p-5 whitespace-pre">
           {lines.map((line, index) => {
             const isHighlighted = highlightedLines.includes(index);
@@ -50,8 +49,8 @@ export default function CodeBlock({ code, language = "HTML", highlightKey = null
                 ref={shouldAttachRef ? highlightRef : null}
                 className={`block ${
                   isHighlighted
-                    ? "bg-yellow-500/20 text-yellow-200"
-                    : "text-gray-100"
+                    ? "bg-accent/15 text-accent"
+                    : "text-gray-200"
                 }`}
               >
                 {line}

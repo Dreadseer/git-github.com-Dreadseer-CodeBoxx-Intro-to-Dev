@@ -4,7 +4,7 @@
 "use client";
 
 import { useState } from "react";
-import { THEME_COLORS } from "@/data/themes";
+import { getTheme } from "@/data/themes";
 
 export default function MessageCycler({
   appTitle,
@@ -17,7 +17,7 @@ export default function MessageCycler({
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // Get the full theme object for the selected color key
-  const theme = THEME_COLORS[themeColor] || THEME_COLORS["blue"];
+  const theme = getTheme(themeColor);
 
   // Advance to the next message, wrapping back to 0 after the last one
   function handleTap() {

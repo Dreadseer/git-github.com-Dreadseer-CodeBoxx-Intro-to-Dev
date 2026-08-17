@@ -10,5 +10,19 @@ export const THEME_COLORS = {
   slate:  { label: "Slate",   hex: "#475569", text: "#ffffff" },
 };
 
+// Hidden theme — only appears in the picker after the entry-screen easter egg.
+// Unlocked by tapping the Build Lab wordmark five times.
+export const SECRET_THEME_KEY = "midnight";
+export const SECRET_THEME = { label: "Midnight", hex: "#0F172A", text: "#ffffff" };
+
+// sessionStorage flag that records the unlock for this visit
+export const SECRET_UNLOCK_FLAG = "cbx_secret_theme";
+
+// Returns the full theme object for a key, including the secret theme
+export function getTheme(key) {
+  if (key === SECRET_THEME_KEY) return SECRET_THEME;
+  return THEME_COLORS[key] || THEME_COLORS.purple;
+}
+
 // The theme key that is selected by default before a user makes a choice
 export const DEFAULT_THEME = "purple";

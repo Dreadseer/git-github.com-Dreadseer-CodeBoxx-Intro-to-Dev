@@ -1,5 +1,6 @@
-// WidgetCanvas.jsx — Renders placed widgets for a specific slot inside the live preview.
-// Also acts as the drop target for dragged widgets.
+// WidgetCanvas.jsx — Renders installed modules for a specific slot inside the live preview.
+// Acts as the drop target for dragged modules. Empty slots stay invisible unless a
+// drag is in progress, so the preview reads as the actual creation, not a form.
 
 "use client";
 
@@ -12,16 +13,15 @@ export default function WidgetCanvas({
   onRemove,
   onEdit,
   selectedWidgetId,
+  showHints = false,
 }) {
   // Only show widgets assigned to this slot
   const slotWidgets = widgets.filter((w) => w.position === slot);
 
-  // Allow dragged items to be dropped here
   function handleDragOver(e) {
     e.preventDefault();
   }
 
-  // Read the widget key from the drag data and notify the parent
   function handleDrop(e) {
     e.preventDefault();
     const widgetKey = e.dataTransfer.getData("widgetKey");
@@ -30,20 +30,22 @@ export default function WidgetCanvas({
     }
   }
 
+  // Nothing installed and no drag happening — take up no space at all
+  if (slotWidgets.length === 0 && !showHints) return null;
+
   return (
     <div
       onDragOver={handleDragOver}
       onDrop={handleDrop}
-      className="w-full min-h-[40px] flex flex-col gap-2"
+      className="w-full flex flex-col gap-2"
     >
-      {/* Empty slot hint */}
-      {slotWidgets.length === 0 && (
-        <div className="w-full border-2 border-dashed border-gray-200 rounded-lg py-2 text-center text-xs text-gray-400">
-          Drop here
+      {/* Drop hint — only while a module is being dragged */}
+      {slotWidgets.length === 0 && showHints && (
+        <div className="w-full border-2 border-dashed border-accent/50 bg-accent/5 rounded-lg py-2 text-center text-xs text-gray-500">
+          Drop module here
         </div>
       )}
 
-      {/* Render each widget in this slot */}
       {slotWidgets.map((widget) => (
         <WidgetItem
           key={widget.id}
