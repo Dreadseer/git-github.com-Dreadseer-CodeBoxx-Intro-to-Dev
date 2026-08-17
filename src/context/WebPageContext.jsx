@@ -1,132 +1,98 @@
+// WebPageContext.jsx — Manages form state for Experience 1 (Web Page Builder).
+// Provides formData, updateField, and all widget methods to all steps, the preview, and result screen.
+
 "use client";
 
 import { createContext, useContext, useState } from "react";
+import { DEFAULT_THEME } from "@/data/themes";
+import { DEFAULT_AVATAR } from "@/data/avatars";
+import { WIDGET_TYPES } from "@/data/widgets";
 
+// Create the context object
 const WebPageContext = createContext(null);
 
-const defaultState = {
-  // Site-wide
-  themeColor: "purple",
-  fontPairing: "modern",
-
-  // Hero (always on)
+// The default state a student starts with before filling anything in
+const defaultFormData = {
   name: "",
-  tagline: "",
-  avatar: "rocket",
-  heroBackground: "gradient",
-  ctaLabel: "Contact Me",
-  ctaUrl: "",
-  ctaEnabled: true,
-
-  // Sections (toggleable)
-  sections: {
-    about: { enabled: true, heading: "About Me", bio: "" },
-    skills: { enabled: true, heading: "My Skills", tags: [] },
-    contact: {
-      enabled: true,
-      heading: "Get In Touch",
-      email: "",
-      github: "",
-      instagram: "",
-      linkedin: "",
-    },
-  },
-
+  dreamJob: "",
+  bio: "",
+  themeColor: DEFAULT_THEME,
+  avatar: DEFAULT_AVATAR,
+  widgets: [],
   lastChanged: null,
 };
 
+// Provider component — wraps the experience route so all children can access state
 export function WebPageProvider({ children }) {
-  const [formData, setFormData] = useState(defaultState);
+  const [formData, setFormData] = useState(defaultFormData);
 
-  // Update a top-level field (name, tagline, themeColor, etc.)
+  // Updates a single field without overwriting the rest of the form data
   function updateField(key, value) {
     setFormData((prev) => ({ ...prev, [key]: value, lastChanged: key }));
   }
 
-  // Update a field inside a specific section
-  function updateSection(sectionKey, fieldKey, value) {
+  // Adds a new widget instance at the chosen position with default values
+  function addWidget(type, position) {
+    const widgetDef = WIDGET_TYPES.find((w) => w.key === type);
+    const newWidget = {
+      id: `widget_${Date.now()}`,
+      type,
+      position,
+      values: { ...widgetDef.defaults },
+    };
     setFormData((prev) => ({
       ...prev,
-      sections: {
-        ...prev.sections,
-        [sectionKey]: {
-          ...prev.sections[sectionKey],
-          [fieldKey]: value,
-        },
-      },
-      lastChanged: `${sectionKey}.${fieldKey}`,
+      lastChanged: { kind: "widget", widgetType: type, slot: position },
+      widgets: [...prev.widgets, newWidget],
     }));
   }
 
-  // Toggle a section on or off
-  function toggleSection(sectionKey) {
+  // Removes a widget by its unique id
+  function removeWidget(id) {
     setFormData((prev) => ({
       ...prev,
-      sections: {
-        ...prev.sections,
-        [sectionKey]: {
-          ...prev.sections[sectionKey],
-          enabled: !prev.sections[sectionKey].enabled,
-        },
-      },
-      lastChanged: `${sectionKey}.enabled`,
+      widgets: prev.widgets.filter((w) => w.id !== id),
     }));
   }
 
-  // Add a skill tag to the skills section
-  function addSkillTag(tag) {
-    const trimmed = tag.trim();
-    if (!trimmed) return;
+  // Updates a single value field on a widget instance
+  function updateWidget(id, key, value) {
     setFormData((prev) => {
-      const existing = prev.sections.skills.tags;
-      if (existing.includes(trimmed)) return prev;
+      const widget = prev.widgets.find((w) => w.id === id);
       return {
         ...prev,
-        sections: {
-          ...prev.sections,
-          skills: {
-            ...prev.sections.skills,
-            tags: [...existing, trimmed],
-          },
-        },
-        lastChanged: "skills.tags",
+        lastChanged: widget
+          ? { kind: "widget", widgetType: widget.type, slot: widget.position }
+          : prev.lastChanged,
+        widgets: prev.widgets.map((w) =>
+          w.id === id ? { ...w, values: { ...w.values, [key]: value } } : w
+        ),
       };
     });
   }
 
-  // Remove a skill tag by value
-  function removeSkillTag(tag) {
+  // Moves a widget to a different placement slot
+  function moveWidget(id, newPosition) {
     setFormData((prev) => ({
       ...prev,
-      sections: {
-        ...prev.sections,
-        skills: {
-          ...prev.sections.skills,
-          tags: prev.sections.skills.tags.filter((t) => t !== tag),
-        },
-      },
-      lastChanged: "skills.tags",
+      widgets: prev.widgets.map((w) =>
+        w.id === id ? { ...w, position: newPosition } : w
+      ),
     }));
   }
 
   return (
-    <WebPageContext.Provider
-      value={{
-        formData,
-        updateField,
-        updateSection,
-        toggleSection,
-        addSkillTag,
-        removeSkillTag,
-      }}
-    >
+    <WebPageContext.Provider value={{ formData, updateField, addWidget, removeWidget, updateWidget, moveWidget }}>
       {children}
     </WebPageContext.Provider>
   );
 }
 
+// Custom hook — components call useWebPage() instead of useContext(WebPageContext)
 export function useWebPage() {
-  const ctx = useContext(WebPageContext);
-  if (!ctx) throw new Error("useWebPage must be used inside <WebPageProvider>");
-  return ctx;
+  const context = useContext(WebPageContext);
+  if (!context) {
+    throw new Error("useWebPage must be used inside a WebPageProvider");
+  }
+  return context;
 }
