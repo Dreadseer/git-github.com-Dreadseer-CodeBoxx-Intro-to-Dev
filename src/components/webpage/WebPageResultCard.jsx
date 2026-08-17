@@ -1,24 +1,25 @@
 // WebPageResultCard.jsx — Full-width display of the student's finished personal landing page.
-// Renders base content AND all placed widgets at their correct slot positions.
+// Renders base content AND all installed modules at their slot positions.
 
 "use client";
 
-import { useWebPage } from "@/context/WebPageContext";
-import { THEME_COLORS } from "@/data/themes";
+import { useBuilder } from "@/context/BuilderContext";
+import { getTheme } from "@/data/themes";
 import { AVATAR_OPTIONS } from "@/data/avatars";
+import { SlotWidgets } from "@/components/shared/WidgetResultRenderer";
 
 export default function WebPageResultCard() {
-  const { formData } = useWebPage();
+  const { formData } = useBuilder();
 
-  const theme = THEME_COLORS[formData.themeColor] || THEME_COLORS["purple"];
+  const theme = getTheme(formData.themeColor);
   const avatarEmoji =
     AVATAR_OPTIONS.find((a) => a.key === formData.avatar)?.emoji || "🚀";
   const widgets = formData.widgets || [];
 
   return (
-    <div className="w-full rounded-2xl border border-gray-200 shadow-md overflow-hidden mt-4 mb-6">
+    <div className="w-full rounded-2xl overflow-hidden mt-4 mb-6 bg-white shadow-[0_0_50px_rgba(245,197,24,0.1)] animate-pop">
 
-      {/* TOP slot widgets */}
+      {/* TOP slot modules */}
       <SlotWidgets widgets={widgets} slot="top" />
 
       {/* Colored header band with avatar */}
@@ -29,7 +30,7 @@ export default function WebPageResultCard() {
         <span className="text-4xl">{avatarEmoji}</span>
       </div>
 
-      {/* AFTER_HEADER slot widgets */}
+      {/* AFTER_HEADER slot modules */}
       <SlotWidgets widgets={widgets} slot="after_header" />
 
       {/* Card body — base content */}
@@ -61,7 +62,7 @@ export default function WebPageResultCard() {
 
       </div>
 
-      {/* BOTTOM slot widgets */}
+      {/* BOTTOM slot modules */}
       <SlotWidgets widgets={widgets} slot="bottom" />
 
       {/* Footer tag */}
@@ -71,77 +72,4 @@ export default function WebPageResultCard() {
 
     </div>
   );
-}
-
-// Renders all widgets assigned to a specific placement slot
-function SlotWidgets({ widgets, slot }) {
-  const slotWidgets = widgets.filter((w) => w.position === slot);
-  if (slotWidgets.length === 0) return null;
-  return (
-    <>
-      {slotWidgets.map((widget) => (
-        <WidgetResultRenderer key={widget.id} widget={widget} />
-      ))}
-    </>
-  );
-}
-
-// Renders the visual output of a single widget for the result screen.
-// Read-only — no edit or remove controls.
-function WidgetResultRenderer({ widget }) {
-  const { type, values } = widget;
-
-  if (type === "heading") {
-    return (
-      <p className="font-bold text-gray-800 text-sm px-6 py-2">
-        {values.text || "My Heading"}
-      </p>
-    );
-  }
-
-  if (type === "button") {
-    return (
-      <div className="px-6 py-2">
-        <span className="inline-block bg-gray-800 text-white text-center rounded-lg py-2 px-4 text-xs">
-          {values.label || "Click Me"}
-        </span>
-      </div>
-    );
-  }
-
-  if (type === "contact") {
-    return (
-      <div className="flex flex-col gap-1 px-6 py-2">
-        {["Name", "Email", "Message"].map((field) => (
-          <div key={field} className="border border-gray-200 rounded px-2 py-1 text-xs text-gray-400">
-            {field}
-          </div>
-        ))}
-      </div>
-    );
-  }
-
-  if (type === "message_box") {
-    return (
-      <div className="mx-6 my-2 bg-blue-50 border border-blue-200 rounded-lg p-3 text-xs text-blue-800">
-        {values.text || "Add your message here."}
-      </div>
-    );
-  }
-
-  if (type === "social") {
-    return (
-      <div className="flex gap-2 flex-wrap px-6 py-2">
-        {["github", "instagram", "linkedin"].map((platform) =>
-          values[platform] ? (
-            <span key={platform} className="text-xs bg-gray-100 rounded-full px-2 py-1 text-gray-600">
-              {platform}: {values[platform]}
-            </span>
-          ) : null
-        )}
-      </div>
-    );
-  }
-
-  return null;
 }

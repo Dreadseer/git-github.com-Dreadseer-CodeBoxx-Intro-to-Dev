@@ -1,34 +1,43 @@
-// CodeBoxxCTA.jsx — Call-to-action block shown at the bottom of every result screen.
-// Links students to CodeBoxx Academy. This component is required on all result screens.
+// CodeBoxxCTA.jsx — Recruitment connection shown after the build completes.
+// Connects what the student just did to what developers actually do, then
+// points at CodeBoxx. Required on every result screen.
 
-export default function CodeBoxxCTA() {
+export default function CodeBoxxCTA({ decisions = 0 }) {
   return (
-    <div className="w-full bg-yellow-50 border border-yellow-200 rounded-2xl p-6 mt-2 mb-8">
+    <div className="w-full bg-ink-900 border border-accent/30 rounded-2xl p-6 mt-2 mb-8">
+
+      {/* System eyebrow */}
+      <p className="sys text-[10px] text-accent mb-2">TRANSMISSION // NEXT LEVEL</p>
 
       {/* Headline */}
-      <p className="text-xl font-bold text-gray-900 text-center">
-        Want to build more?
+      <p className="text-xl font-bold text-fg">
+        You just did what developers do.
       </p>
 
-      {/* Subheadline */}
-      <p className="text-sm text-gray-500 text-center mt-1">
-        CodeBoxx Academy teaches full-stack development in 12 weeks.
-        No experience required.
+      {/* The connection */}
+      <p className="text-sm text-fg-mid mt-2 leading-relaxed">
+        {decisions > 0
+          ? `You made ${decisions} product decisions in about five minutes — and a working product formed around them. `
+          : "You made a series of product decisions — and a working product formed around them. "}
+        That loop — decide, build, see the result — is software development.
+        CodeBoxx Academy teaches you the full version in 12 weeks. No experience
+        required.
       </p>
 
       {/* CTA button — external link, opens in new tab */}
       <a
-        href={process.env.NEXT_PUBLIC_CTA_URL}
+        href={process.env.NEXT_PUBLIC_CTA_URL || "https://codeboxx.com"}
         target="_blank"
         rel="noopener noreferrer"
-        className="w-full block bg-yellow-400 text-gray-900 font-bold text-base py-4 rounded-2xl text-center mt-4"
+        className="w-full block bg-accent text-on-accent font-bold text-base py-4 rounded-xl
+          text-center mt-5 transition-transform duration-150 active:scale-[0.98]"
       >
-        Learn More at CodeBoxx →
+        EXPLORE CODEBOXX →
       </a>
 
       {/* Fine print */}
-      <p className="text-xs text-center text-gray-400 mt-3">
-        Scan the QR code at our booth to save this link.
+      <p className="text-xs text-center text-fg-dim mt-3">
+        Ask anyone at the booth — most of them started exactly where you are.
       </p>
 
     </div>

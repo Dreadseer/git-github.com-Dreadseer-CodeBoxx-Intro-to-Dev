@@ -1,11 +1,11 @@
 // generateAppCode.js — Builds a complete HTML + JavaScript app string from the student's form data.
 // This is the code revealed in the "See the Code" section on the result screen.
 
-import { THEME_COLORS } from "@/data/themes";
+import { getTheme } from "@/data/themes";
 
 export function generateAppCode({ appTitle, buttonLabel, messages, themeColor, widgets }) {
   // Look up the hex color for the chosen theme
-  const theme = THEME_COLORS[themeColor] || THEME_COLORS["blue"];
+  const theme = getTheme(themeColor);
 
   // Turn the messages array into a JavaScript array string for the generated code
   const messagesAsJS = JSON.stringify(messages);
@@ -111,6 +111,9 @@ ${afterHeaderWidgets ? `\n  <!-- After header widgets -->\n${afterHeaderWidgets}
 ${bottomWidgets ? `\n  <!-- Bottom widgets -->\n${bottomWidgets}\n` : ""}
   <!-- This is the footer credit -->
   <p style="color: #9ca3af; font-size: 11px; margin-top: 32px;">Made with CodeBoxx</p>
+
+  <!-- psst. you read this far into your own source code. -->
+  <!-- that curiosity is the whole job. — a CodeBoxx developer -->
 
 </body>
 </html>`;

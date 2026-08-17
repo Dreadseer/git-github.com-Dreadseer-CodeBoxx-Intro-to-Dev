@@ -1,24 +1,26 @@
-// WidgetItem.jsx — Renders a single placed widget with edit and remove controls.
-// Highlighted with a yellow ring when selected.
+// WidgetItem.jsx — Renders a single installed module with edit and remove controls.
+// Lives inside the white creation preview, so it keeps light styling; the accent
+// ring marks the module currently open in the editor.
 
 "use client";
 
 export default function WidgetItem({ widget, isSelected, onRemove, onEdit }) {
   return (
     <div
-      className={`relative w-full rounded-xl border border-gray-200 bg-white p-3 ${
-        isSelected ? "ring-2 ring-yellow-400 ring-offset-1" : ""
+      className={`relative w-full rounded-lg border bg-white p-2.5 animate-pop ${
+        isSelected ? "border-accent ring-1 ring-accent" : "border-gray-200"
       }`}
     >
-      {/* Remove button — top right corner */}
+      {/* Remove control — top right corner, full tap target */}
       <button
         onClick={onRemove}
-        className="absolute top-2 right-2 text-xs text-gray-400 hover:text-red-400"
+        aria-label="Remove module"
+        className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center text-xs text-gray-400"
       >
         ✕
       </button>
 
-      {/* Tapping the widget body opens the editor */}
+      {/* Tapping the module body opens the editor */}
       <div onClick={onEdit} className="cursor-pointer pr-6">
         <WidgetRenderer widget={widget} />
       </div>
@@ -26,7 +28,7 @@ export default function WidgetItem({ widget, isSelected, onRemove, onEdit }) {
   );
 }
 
-// Renders the visual output of each widget type
+// Renders the visual output of each module type
 function WidgetRenderer({ widget }) {
   const { type, values } = widget;
 

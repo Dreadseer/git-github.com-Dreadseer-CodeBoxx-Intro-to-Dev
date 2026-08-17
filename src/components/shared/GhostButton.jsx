@@ -1,11 +1,12 @@
 // GhostButton.jsx — Secondary button for back navigation or optional actions.
-// Transparent background with a gray border.
+// Transparent surface with a subtle border on the dark lab background.
 
 export default function GhostButton({ label, onClick }) {
   return (
     <button
       onClick={onClick}
-      className="w-full bg-transparent border border-gray-300 text-gray-600 font-semibold text-lg py-4 rounded-2xl mt-2"
+      className="w-full bg-transparent border border-line-strong text-fg-mid font-semibold
+        text-base py-4 rounded-xl mt-2 active:bg-ink-800 transition-colors duration-150"
     >
       {label}
     </button>
